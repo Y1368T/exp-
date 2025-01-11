@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List with Backend</title>
+    <link href="CSS/bootstrap.min.css" rel="stylesheet" />
+    <link href="CSS/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">To-Do List</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="calendar.html">Calendar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="search.html">Search</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h3 class="text-center">My To-Do List</h3>
+      <div class="input-container d-flex justify-content-center mb-3">
+        <input
+          type="text"
+          id="new-task"
+          class="form-control me-2"
+          placeholder="Add a new task"
+        />
+        <input type="date" id="due-date" class="form-control me-2" />
+        <button class="btn btn-primary" id="add-task">Add</button>
+      </div>
+
+      <ul id="task-list" class="list-group"></ul>
+
+      <!-- Error and Success messages -->
+      <div id="message" class="alert mt-3" style="display: none"></div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+      async function fetchTasks() {
+        const token = localStorage.getItem("access_token");
+        console.log("Access Token:", token);
+        if (!token) {
+          showMessage("No access token found. Please log in.", "danger");
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            "http://localhost:3000/api/v1/todolist",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log(response);
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch tasks");
+          }
+
+          const text = await response.text(); // Read as text first
+          if (!text) {
+            showMessage("No tasks available.", "info");
+            return;
+          }
+
+          const tasks = JSON.parse(text); // Manually parse the text as JSON
+          console.log(tasks);
+          const taskList = document.getElementById("task-list");
+          taskList.innerHTML = "";
+
+          tasks.forEach((task) => {
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item";
+            listItem.textContent = `${task.title} (Due: ${task.dueDate})`;
+            taskList.appendChild(listItem);
+          });
+        } catch (error) {
+          showMessage(error.message, "danger");
+        }
+      }
+
+      async function addTask() {
+        const title = document.getElementById("new-task").value;
+        const dueDate = document.getElementById("due-date").value;
+        const token = localStorage.getItem("access_token");
+
+        if (!title || !dueDate) {
+          showMessage(
+            "Please provide a title and due date for the task.",
+            "warning"
+          );
+          return;
+        }
+
+        if (!token) {
+          showMessage("No access token found. Please log in.", "danger");
+          return;
+        }
+
+        const newTask = {
+          title: title,
+          dueDate: dueDate,
+        };
+
+        try {
+          const response = await fetch(
+            "http://localhost:3000/api/v1/todolist",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(newTask),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to add task");
+          }
+
+          const task = await response.json();
+          showMessage("Task added successfully!", "success");
+          fetchTasks(); // Re-fetch tasks after adding a new one
+          document.getElementById("new-task").value = "";
+          document.getElementById("due-date").value = "";
+        } catch (error) {
+          showMessage(error.message, "danger");
+        }
+      }
+
+      function showMessage(message, type) {
+        const messageElement = document.getElementById("message");
+        messageElement.textContent = message;
+        messageElement.className = `alert alert-${type}`;
+        messageElement.style.display = "block";
+      }
+
+      document.getElementById("add-task").addEventListener("click", addTask);
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("Page is loaded, fetching tasks...");
+        fetchTasks();
+      });
+    </script>
+  </body>
+</html>

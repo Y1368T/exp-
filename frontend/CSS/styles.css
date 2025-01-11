@@ -1,0 +1,58 @@
+body {
+  background-color: lemonchiffon;
+}
+
+.btn-lemon {
+  background-color: #f9e79f;
+  color: black;
+  border: 1px solid #f7dc6f;
+}
+
+.btn-lemon:hover {
+  background-color: #f7dc6f;
+  color: black;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-bar {
+  position: fixed;
+  bottom: 0;
+  align-items: center;
+  width: 100%;
+  background-color: lemonchiffon;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-evenly;
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.menu-bar a {
+  color: black;
+  text-decoration: none;
+  font-size: 24px;
+}
+
+h3.text-center {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#no-tasks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  font-style: italic;
+  color: gray;
+}
+
+ul.list-group {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

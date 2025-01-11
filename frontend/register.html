@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Page</title>
+    <link href="CSS/bootstrap.min.css" rel="stylesheet" />
+    <link href="CSS/styles.css" rel="stylesheet" />
+    <style>
+      .error-message {
+        color: red;
+        display: none;
+      }
+      .success-message {
+        color: green;
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 20px">
+      <h3 class="text-center mb-4">Join My To-do List</h3>
+      <form id="register-form">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            placeholder="Enter your name"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="confirm-password" class="form-label"
+            >Confirm Password</label
+          >
+          <input
+            type="password"
+            id="confirm-password"
+            class="form-control"
+            placeholder="Confirm your password"
+            required
+          />
+        </div>
+        <div class="error-message" id="error-message">
+          Passwords do not match!
+        </div>
+        <div class="success-message" id="success-message">
+          Registration successful! Redirecting to login...
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">
+          Sign Up
+        </button>
+        <p class="text-center">
+          Already have an account?
+          <a href="login.html" class="text-decoration-none">Log In</a>
+        </p>
+      </form>
+    </div>
+    <script>
+      document
+        .getElementById("register-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault(); // Prevent form submission
+
+          const name = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirm-password").value;
+          const errorMessage = document.getElementById("error-message");
+          const successMessage = document.getElementById("success-message");
+
+          // Check if passwords match
+          if (password !== confirmPassword) {
+            errorMessage.textContent = "Passwords do not match!";
+            errorMessage.style.display = "block";
+            return;
+          } else {
+            errorMessage.style.display = "none";
+          }
+
+          // Send data to backend (NestJS)
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/v1/auth/signup",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name, email, password }),
+              }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+              successMessage.style.display = "block";
+              setTimeout(() => {
+                window.location.href = "login.html"; // Redirect to login page after registration
+              }, 2000);
+            } else {
+              errorMessage.textContent = "Registration failed: " + data.message;
+              errorMessage.style.display = "block";
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            errorMessage.textContent = "An error occurred. Please try again.";
+            errorMessage.style.display = "block";
+          }
+        });
+    </script>
+  </body>
+</html>

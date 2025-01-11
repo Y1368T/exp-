@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A simple calendar application.">
+  <meta name="keywords" content="calendar, tasks, schedule">
+  <title>Calendar</title> 
+  <link href="CSS/bootstrap.min.css" rel="stylesheet">
+  <link href="CSS/styles.css" rel="stylesheet">
+  <link href="CSS/calendar.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Calendar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="add-task.html">To-Do List</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="search.html">Search</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h3 class="text-center">Calendar</h3>
+    <div class="d-flex justify-content-between mb-3">
+      <button class="btn btn-secondary" onclick="prevMonth()">Previous</button>
+      <h4 id="month-year" class="text-center">January 2025</h4>
+      <button class="btn btn-secondary" onclick="nextMonth()">Next</button>
+    </div>
+    <div class="calendar">
+      <div class="row">
+        <div class="col text-center">Sun</div>
+        <div class="col text-center">Mon</div>
+        <div class="col text-center">Tue</div>
+        <div class="col text-center">Wed</div>
+        <div class="col text-center">Thu</div>
+        <div class="col text-center">Fri</div>
+        <div class="col text-center">Sat</div>
+      </div>
+      <div class="row" id="calendar-days">
+      </div>
+    </div>
+  </div>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/calendar.js"></script>
+</body>
+</html>

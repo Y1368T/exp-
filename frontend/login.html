@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <link href="CSS/bootstrap.min.css" rel="stylesheet" />
+    <link href="CSS/styles.css" rel="stylesheet" />
+    <style>
+      .error-message {
+        color: red;
+        display: none;
+      }
+      .success-message {
+        color: green;
+        display: none;
+      }
+    </style>
+    <script>
+      async function loginUser(event) {
+        event.preventDefault(); // Prevent the form from refreshing the page
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const errorMessage = document.getElementById("error-message");
+        const successMessage = document.getElementById("success-message");
+
+        try {
+          const response = await fetch(
+            "http://localhost:3000/api/v1/auth/signin",
+            {
+              // Change the URL as per your API
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: email,
+                password: password,
+              }),
+            }
+          );
+
+          const data = await response.json();
+          console.log(data);
+          if (response.ok) {
+            // Store the token in localStorage
+            localStorage.setItem("access_token", data.accessToken);
+            // Display success message and redirect user
+            successMessage.style.display = "block";
+            errorMessage.style.display = "none";
+            setTimeout(() => {
+              window.location.href = "todolist.html"; // Redirect to the to-do list page
+            }, 2000);
+          } else {
+            // Display error message
+            errorMessage.textContent = "Login failed: " + data.message;
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+          }
+        } catch (error) {
+          errorMessage.textContent = "An error occurred: " + error.message;
+          errorMessage.style.display = "block";
+          successMessage.style.display = "none";
+        }
+      }
+    </script>
+  </head>
+  <body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 20px">
+      <h3 class="text-center mb-4">Welcome Back!</h3>
+      <form onsubmit="loginUser(event)">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <div class="error-message" id="error-message"></div>
+        <div class="success-message" id="success-message"></div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Log In</button>
+        <p class="text-center">
+          Don't have an account?
+          <a href="register.html" class="text-decoration-none">Register</a>
+        </p>
+      </form>
+    </div>
+  </body>
+</html>

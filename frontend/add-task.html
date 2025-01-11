@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Task</title>
+    <link href="CSS/bootstrap.min.css" rel="stylesheet" />
+    <link href="CSS/styles.css" rel="stylesheet" />
+  </head>
+  <body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 20px">
+      <h3 class="text-center mb-4">Add a New Task</h3>
+      <form id="add-task-form">
+        <div class="mb-3">
+          <label for="new-task" class="form-label">Task</label>
+          <input
+            type="text"
+            id="new-task"
+            class="form-control"
+            placeholder="Enter your task"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="due-date" class="form-label">Due Date</label>
+          <input type="date" id="due-date" class="form-control" required />
+        </div>
+        <div
+          class="error-message"
+          id="error-message"
+          style="color: red; display: none"
+        ></div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">
+          Add Task
+        </button>
+      </form>
+    </div>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+      async function createTask(title, dueDate) {
+        try {
+          const token = localStorage.getItem("access_token");
+          if (!token) {
+            throw new Error("No access token found");
+          }
+
+          const response = await fetch("http://localhost:3000/todo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ title, dueDate }),
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to create task: ${response.statusText}`);
+          }
+          const newTask = await response.json();
+          console.log("Task created:", newTask);
+        } catch (error) {
+          console.error("Error creating task:", error);
+        }
+      }
+    </script>
+  </body>
+</html>
